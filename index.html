@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title id="page-title">Astroluv | Aliandi's Day</title>
+    
+    <meta property="og:title" content="Astroluv | Aliandi's Day">
+    <meta property="og:description" content="written in the stars, built for the main character.">
+    <meta property="og:image" content="https://by-luneva.github.io/astroluv/thumbnail.png?v=3">
+    <meta property="og:url" content="https://by-luneva.github.io/astroluv/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Astroluv | Aliandi's Day">
+    <meta name="twitter:description" content="written in the stars, built for the main character.">
+    <meta name="twitter:image" content="https://by-luneva.github.io/astroluv/thumbnail.png?v=3">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Comfortaa:wght@400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@500;600&display=stylesheet" rel="stylesheet">
+    
+    <style>
+        /* ================= 1. GLOBAL & RESET ================= */
+        * { box-sizing: border-box; margin: 0; padding: 0; overflow-wrap: break-word; word-wrap: break-word; -webkit-tap-highlight-color: transparent; outline: none !important; }
+        html, body { background-color: #0c183a; color: #F5F4F0; width: 100%; height: 100%; overflow: hidden; font-family: 'Cormorant Garamond', serif; -webkit-font-smoothing: antialiased; }
+        a, button, input, .orbit-item, .track { outline: none !important; }
+
+        /* ================= 2. LAYOUT & SCREENS ================= */
+        #app-wrapper { position: relative; width: 100%; height: 100%; background: radial-gradient(circle at 50% 20%, #162a5f 0%, #0c183a 100%); overflow-y: hidden; overflow-x: hidden; -webkit-overflow-scrolling: touch; transform: translateZ(0); }
+        #app-wrapper.allow-scroll { overflow-y: auto; }
+        .screen { position: fixed; top: 0; left: 0; height: 100vh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; z-index: 20; overflow: hidden; background: radial-gradient(circle at center, #162a5f 0%, #0c183a 100%); }
+        .hidden { display: none !important; }
+        .main-content { width: 100%; position: relative; z-index: 10; }
+
+        /* ================= 3. LOADING & FALLING STARS ================= */
+        .falling-star { position: fixed; top: -50px; pointer-events: none; z-index: 1; user-select: none; animation: fallAnimation linear forwards; will-change: transform, opacity; transform: translateZ(0); }
+        @keyframes fallAnimation { 0% { transform: translateY(0) rotate(0deg) translateZ(0); opacity: 0; } 15% { opacity: 0.4; } 85% { opacity: 0.4; } 100% { transform: translateY(105vh) rotate(360deg) translateZ(0); opacity: 0; } }
+        .cosmic-spinner { width: 55px; height: 55px; border: 2px solid rgba(231, 226, 206, 0.15); border-top: 2px solid #E7E2CE; border-radius: 50%; animation: spinCosmic 0.8s linear infinite; box-shadow: 0 0 25px rgba(231, 226, 206, 0.3); margin-bottom: 12px; will-change: transform; transform: translateZ(0); }
+        @keyframes spinCosmic { 0% { transform: rotate(0deg) translateZ(0); } 100% { transform: rotate(360deg) translateZ(0); } }
+        .loading-text { margin-top: 16px; font-size: 9.5pt; color: rgba(231, 226, 206, 0.65); letter-spacing: 1.5px; font-family: 'Comfortaa', sans-serif; }
+        .loading-percent { margin-top: 6px; font-family: 'Cinzel', serif; font-size: 13pt; color: #E7E2CE; letter-spacing: 2px; font-weight: 600; text-shadow: 0 0 12px rgba(231,226,206,0.5); }
+        .loading-bar-track { width: 160px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 14px; overflow: hidden; position: relative; }
+        .loading-bar-fill { width: 0%; height: 100%; background: #E7E2CE; border-radius: 2px; box-shadow: 0 0 10px #E7E2CE; transition: width 0.15s ease; will-change: width; }
+
+        /* ================= 4. PIN SCREEN & KEYPAD ================= */
+        #screen-pin { background: radial-gradient(circle at center, #182e68 0%, #0c183a 100%); }
+        .pin-container { background: rgba(255, 255, 255, 0.04); padding: 35px 18px 18px 18px; border-radius: 35px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(231, 226, 206, 0.2); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 0 25px rgba(231, 226, 206, 0.04); max-width: 320px; width: 90%; display: flex; flex-direction: column; align-items: center; position: relative; margin-top: 30px; }
+        .cassette-wrapper { width: 62px; height: 62px; position: absolute; top: -31px; left: 50%; transform: translateX(-50%) translateZ(0); z-index: 20; }
+        .cassette-img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 15px rgba(231,226,206,0.4)); }
+        .pin-container h2 { font-family: 'Cinzel', serif; color: #E7E2CE; font-weight: 400; font-size: 13pt; letter-spacing: 1.2px; white-space: nowrap; margin-bottom: 4px; text-transform: uppercase; text-shadow: 0 0 10px rgba(231,226,206,0.4); }
+        .sub-title { font-family: 'Comfortaa', sans-serif; font-size: 8pt; color: rgba(245, 244, 240, 0.45); margin-bottom: 15px; }
+        .pin-dots { display: flex; gap: 9px; margin-bottom: 18px; }
+        .dot { width: 9px; height: 9px; border: 1.5px solid rgba(245, 244, 240, 0.35); border-radius: 50%; transition: all 0.2s ease; }
+        .dot.active { background: #E7E2CE; border-color: #E7E2CE; box-shadow: 0 0 15px rgba(231, 226, 206, 0.9); }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 220px; }
+        .key { background: rgba(255, 255, 255, 0.035); border: 1px solid rgba(231, 226, 206, 0.12); color: rgba(245, 244, 240, 0.8); font-family: 'Cinzel', serif; font-size: 10.5pt; border-radius: 50%; cursor: pointer; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; transition: transform 0.15s ease, background 0.15s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.25); will-change: transform; }
+        .key:active { background: rgba(231, 226, 206, 0.3); color: #F5F4F0; box-shadow: 0 0 15px rgba(231,226,206,0.6); transform: scale(0.92) translateZ(0); }
+        .key svg { width: 16px; height: 16px; fill: currentColor; display: block; }
+        .bottom-hint { font-family: 'Comfortaa', sans-serif; font-size: 7.5pt; color: rgba(245, 244, 240, 0.35); margin-top: 15px; }
+
+        /* ================= 5. GIFT BOX SCREEN ================= */
+        .gift-container { position: relative; width: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; }
+        .gift-box-lid { width: 236px; height: auto; z-index: 25; object-fit: contain; cursor: grab; user-select: none; touch-action: none; margin-bottom: -230px; filter: drop-shadow(0 10px 22px rgba(0,0,0,0.65)) brightness(0.92); transition: filter 0.3s; will-change: transform; }
+        .gift-box-lid:hover { filter: drop-shadow(0 0 18px rgba(231,226,206,0.5)) brightness(1.05); }
+        .gift-box-body { width: 220px; height: auto; z-index: 15; object-fit: contain; pointer-events: none; filter: drop-shadow(0 12px 28px rgba(0,0,0,0.75)) brightness(0.92); }
+        #hint-text { color: rgba(231, 226, 206, 0.75); font-style: italic; font-size: 10pt; font-family: 'Comfortaa', sans-serif; margin-top: 12px; text-shadow: 0 0 10px rgba(231,226,206,0.35); }
+
+        /* ================= 6. SECTIONS & CONTENT ================= */
+        .opening-section { padding: 30px 20px 35px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; }
+        .opening-card-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; width: 90%; max-width: 340px; padding: 38px 22px; border: 1px solid rgba(231, 226, 206, 0.22); border-radius: 25px; background: rgba(255, 255, 255, 0.03); box-shadow: 0 22px 55px rgba(0,0,0,0.45), inset 0 0 30px rgba(231,226,206,0.04); opacity: 0; transform: scale(0.96) translateZ(0); transition: opacity 1s ease, transform 1s ease, box-shadow 0.4s ease; will-change: opacity, transform; }
+        .opening-card-wrapper:hover { box-shadow: 0 28px 65px rgba(0,0,0,0.55), inset 0 0 40px rgba(231,226,206,0.08); border-color: rgba(231, 226, 206, 0.4); }
+        .opening-section.reveal-active .opening-card-wrapper { opacity: 1; transform: scale(1) translateZ(0); }
+        .top-tag { font-family: 'Cormorant Garamond', serif; color: #E7E2CE; font-style: italic; font-size: 12pt; letter-spacing: 1.5px; text-shadow: 0 0 10px rgba(231,226,206,0.5); }
+        .opening-title h1 { font-family: 'Cinzel', serif; color: #E7E2CE; text-transform: uppercase; font-weight: 500; line-height: 1.1; text-shadow: 0 0 18px rgba(231,226,206,0.35); }
+        .opening-title h1.txt-happy { font-size: 24pt; letter-spacing: 4px; }
+        .opening-title h1.txt-birthday { font-size: 25pt; letter-spacing: 4px; }
+        .opening-sub { font-family: 'Cinzel', serif; font-size: 10pt; letter-spacing: 2px; color: #E7E2CE; text-transform: uppercase; }
+        .opening-date { font-family: 'Cinzel', serif; font-size: 14pt; color: #E7E2CE; font-weight: 500; text-shadow: 0 0 12px rgba(231,226,206,0.5); }
+        .scroll-indicator { margin-top: 25px; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+        .scroll-text { font-family: 'Comfortaa', sans-serif; font-size: 8pt; color: rgba(231, 226, 206, 0.65); letter-spacing: 4px; text-transform: uppercase; }
+        .scroll-arrows span { display: block; width: 8px; height: 8px; border-bottom: 2px solid rgba(231, 226, 206, 0.85); border-right: 2px solid rgba(231, 226, 206, 0.85); transform: rotate(45deg); margin: -2px 0; animation: arrowScroll 2s infinite; filter: drop-shadow(0 0 6px rgba(231,226,206,0.6)); }
+        @keyframes arrowScroll { 0% { opacity: 0; transform: rotate(45deg) translate(-5px, -5px) translateZ(0); } 50% { opacity: 1; } 100% { opacity: 0; transform: rotate(45deg) translate(5px, 5px) translateZ(0); } }
+
+        .content-body { padding: 10px 20px 140px 20px; width: 100%; max-width: 480px; margin: 0 auto; }
+        section { margin-bottom: 45px; border-bottom: 1px solid rgba(231, 226, 206, 0.12); padding-bottom: 50px; opacity: 0; transform: translateY(25px) translateZ(0); transition: opacity 0.8s ease, transform 0.8s ease; width: 100%; will-change: opacity, transform; content-visibility: auto; contain-intrinsic-size: auto 500px; }
+        section.closing-section-box { opacity: 1 !important; transform: none !important; padding-bottom: 40px !important; }
+        section:last-child { border: none; margin-bottom: 0; }
+        section.reveal-active { opacity: 1; transform: translateY(0) translateZ(0); }
+        h3 { font-family: 'Cinzel', serif; color: #E7E2CE; margin-bottom: 14px; font-weight: 500; font-size: 12pt; text-transform: uppercase; letter-spacing: 2px; text-align: center; text-shadow: 0 0 14px rgba(231,226,206,0.4); }
+
+        /* ================= 7. UNIVERSE / ORBIT SYSTEM ================= */
+        .orbit-system-container { position: relative; width: 100%; aspect-ratio: 1 / 1; max-width: 320px; margin: 25px auto 18px auto; background: radial-gradient(circle at center, rgba(22, 42, 95, 0.5) 0%, rgba(12, 24, 58, 0) 75%); border-radius: 50%; overflow: hidden; }
+        .orbit-rotator-wrapper { position: absolute; width: 100%; height: 100%; top: 0; left: 0; animation: orbitSpin 45s linear infinite; }
+        @keyframes orbitSpin { 100% { transform: rotate(360deg); } }
+        .orbit-item { position: absolute; background: none; border: none; display: flex; flex-direction: column; align-items: center; cursor: pointer; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: opacity 0.6s ease, transform 0.6s ease; z-index: 30; }
+        .orbit-item.spawned { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .orbit-inner-graphic { display: flex; flex-direction: column; align-items: center; animation: counterSpin 45s linear infinite; }
+        @keyframes counterSpin { 100% { transform: rotate(-360deg); } }
+        .orbit-item img, .orbit-sun-static img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 6px rgba(231, 226, 206, 0.4)); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease; }
+        .orbit-item:hover img, .orbit-sun-static:hover img { transform: scale(1.25); filter: drop-shadow(0 0 16px rgba(231, 226, 206, 0.9)) drop-shadow(0 0 6px #fff); }
+        .orbit-label { font-family: 'Cinzel', serif; font-size: 7pt; color: rgba(231, 226, 206, 0.85); text-transform: uppercase; margin-top: 3px; white-space: nowrap; text-shadow: 0 0 4px rgba(0,0,0,0.8); }
+        .orbit-sun-static { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); opacity: 0; width: 58px; height: 68px; z-index: 40; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; transition: all 0.8s ease; }
+        .orbit-sun-static.spawned { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .orbit-sun-static img { width: 58px; height: 58px; }
+        @keyframes planetGlowClick { 0% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(231,226,206,0.4)); } 50% { transform: scale(1.45); filter: drop-shadow(0 0 30px #ffffff) drop-shadow(0 0 50px #E7E2CE); } 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(231,226,206,0.5)); } }
+        .orbit-item.animate-glow img, .orbit-sun-static.animate-glow img { animation: planetGlowClick 0.5s ease-in-out !important; }
+        .p-mercury { top: 22%; left: 50%; width: 34px; height: 34px; }
+        .p-venus { top: 29%; left: 74%; width: 36px; height: 36px; }
+        .p-earth { top: 50%; left: 82%; width: 38px; height: 38px; }
+        .p-moon { top: 62%; left: 91%; width: 24px; height: 24px; z-index: 35; }
+        .p-mars { top: 73%; left: 74%; width: 34px; height: 34px; }
+        .p-jupiter { top: 78%; left: 50%; width: 44px; height: 44px; }
+        .p-saturn { top: 71%; left: 24%; width: 48px; height: 48px; }
+        .p-uranus { top: 50%; left: 16%; width: 38px; height: 38px; }
+        .p-neptune { top: 29%; left: 26%; width: 36px; height: 36px; }
+        .orbit-line-bg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 1px dashed rgba(231, 226, 206, 0.08); border-radius: 50%; pointer-events: none; }
+        .line-1 { width: 30%; height: 30%; border-style: dotted; }
+        .line-2 { width: 44%; height: 44%; }
+        .line-3 { width: 56%; height: 56%; }
+        .line-4 { width: 66%; height: 66%; border-style: dotted; }
+        .line-5 { width: 78%; height: 78%; }
+        .line-6 { width: 88%; height: 88%; border-style: dotted; }
+        .planet-msg { background: rgba(255,255,255,0.045); border-left: 3px solid #E7E2CE; text-align: left; font-family: 'Comfortaa', sans-serif; font-size: 9.5pt; line-height: 1.5; width: 100%; min-height: 75px; padding: 14px; margin-top: 14px; opacity: 0; visibility: hidden; transition: opacity 0.3s ease; box-shadow: 0 12px 28px rgba(0,0,0,0.35); border-radius: 0 14px 14px 0; will-change: opacity; }
+        .planet-msg.active { opacity: 1; visibility: visible; }
+
+        /* ================= 8. LETTER ================= */
+        .glass-paper { background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); padding: 32px 24px; border-radius: 24px; border: 1px solid rgba(231,226,206,0.3); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), 0 10px 20px rgba(0, 0, 0, 0.2), inset 0 0 40px rgba(231,226,206,0.05); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); text-align: left; line-height: 1.8; font-size: 11.2pt; position: relative; transition: transform 0.35s ease, box-shadow 0.35s ease; will-change: transform; }
+        .glass-paper::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, rgba(231,226,206,0.9), transparent); }
+        .glass-paper:hover { box-shadow: 0 25px 60px rgba(0,0,0,0.45), 0 12px 25px rgba(0,0,0,0.25), inset 0 0 50px rgba(231,226,206,0.1); border-color: rgba(231,226,206,0.5); transform: translateY(-3px) translateZ(0); }
+
+        /* ================= 9. MUSIC PLAYER & WISHES ================= */
+        .ios-player-container { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018)); border: 1px solid rgba(231,226,206,0.22); border-radius: 30px; padding: 22px; width: 100%; max-width: 290px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; box-shadow: 0 22px 50px rgba(0,0,0,0.45), inset 0 0 22px rgba(231,226,206,0.035); backdrop-filter: blur(12px); }
+        .player-album-art { width: 190px; height: 190px; background: rgba(255,255,255,0.05); border-radius: 18px; overflow: hidden; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 28px rgba(0,0,0,0.55); border: 1px solid rgba(231,226,206,0.18); }
+        .player-album-art img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 18px; }
+        .timeline-slider { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.15); outline: none; cursor: pointer; }
+        .timeline-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; border-radius: 50%; background: #E7E2CE; box-shadow: 0 0 10px #E7E2CE; cursor: pointer; }
+        .player-controls { display: flex; align-items: center; gap: 25px; margin-bottom: 15px; }
+        .control-btn { background: none; border: none; cursor: pointer; color: #E7E2CE; display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease, filter 0.2s ease; filter: drop-shadow(0 0 6px rgba(231,226,206,0.35)); will-change: transform; }
+        .control-btn:active { transform: scale(0.9) translateZ(0); filter: drop-shadow(0 0 12px rgba(231,226,206,0.85)); }
+        .control-btn svg { width: 22px; height: 22px; fill: currentColor; }
+        .play-main-btn svg { width: 28px; height: 28px; }
+        .playlist-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(231,226,206,0.12); padding: 10px; border-radius: 16px; margin-top: 14px; width: 100%; max-width: 290px; margin-inline: auto; box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+        .track { background: rgba(255,255,255,0.022); padding: 11px 14px; margin: 6px 0; border-radius: 12px; cursor: pointer; display: grid; grid-template-columns: 1.2fr 1fr; font-size: 9pt; font-family: 'Comfortaa', sans-serif; transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease; border: 1px solid transparent; }
+        .track:hover { background: rgba(231, 226, 206, 0.09); border-color: rgba(231,226,206,0.22); }
+        .track.active { background: #E7E2CE; color: #112250; font-weight: bold; box-shadow: 0 0 18px rgba(231,226,206,0.6); }
+
+        .cosmic-star-container { display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 30px 0 18px 0; position: relative; }
+        .star-glow-ring { position: absolute; width: 105px; height: 105px; border-radius: 50%; background: radial-gradient(circle, rgba(231,226,206,0.3) 0%, transparent 70%); animation: ringPulse 2.5s ease-in-out infinite; pointer-events: none; }
+        @keyframes ringPulse { 0%, 100% { transform: scale(0.85); opacity: 0.4; } 50% { transform: scale(1.25); opacity: 0.85; } }
+        .cosmic-star-trigger { background: radial-gradient(circle, rgba(231,226,206,0.18) 0%, transparent 70%); border: 1px solid rgba(231,226,206,0.35); border-radius: 50%; cursor: pointer; position: relative; width: 85px; height: 85px; display: flex; align-items: center; justify-content: center; z-index: 50; animation: starPulse 3s ease-in-out infinite; will-change: transform, filter; transform: translateZ(0); box-shadow: 0 0 22px rgba(231,226,206,0.3); transition: transform 0.2s ease; }
+        @keyframes starPulse { 0%, 100% { transform: scale(1) translateZ(0); filter: drop-shadow(0 0 12px rgba(231,226,206,0.5)); } 50% { transform: scale(1.08) translateZ(0); filter: drop-shadow(0 0 28px rgba(231,226,206,0.95)); } }
+        @keyframes starClickMotion { 0% { transform: scale(1) rotate(0deg) translateZ(0); } 50% { transform: scale(1.35) rotate(180deg) translateZ(0); } 100% { transform: scale(1) rotate(360deg) translateZ(0); } }
+        .cosmic-star-trigger.animate-click { animation: starClickMotion 0.5s ease-in-out !important; }
+        .cosmic-star-trigger svg { width: 48px; height: 48px; fill: #E7E2CE; transition: transform 0.3s ease; }
+        .cosmic-star-trigger:hover svg { transform: scale(1.12); }
+        .star-hint-badge { font-family: 'Comfortaa', sans-serif; font-size: 8pt; color: rgba(231, 226, 206, 0.85); background: rgba(231, 226, 206, 0.08); border: 1px solid rgba(231, 226, 206, 0.2); padding: 5px 14px; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.5px; animation: hintFade 2s ease-in-out infinite alternate; }
+        @keyframes hintFade { 0% { opacity: 0.6; } 100% { opacity: 1; text-shadow: 0 0 8px rgba(231,226,206,0.6); } }
+        .jar-msg { font-style: italic; color: #E7E2CE; font-size: 9.5pt; min-height: 42px; font-family: 'Comfortaa', sans-serif; margin-top: 16px; text-align: center; opacity: 0; filter: blur(5px); transition: opacity 0.5s ease, filter 0.5s ease; text-shadow: 0 0 10px rgba(231,226,206,0.45); will-change: opacity, filter; }
+        .jar-msg.active { opacity: 1; filter: blur(0); }
+
+        /* ================= 10. MODALS & POPUPS ================= */
+        .modal-overlay, .closing-box-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(12, 24, 58, 0.8); display: flex; align-items: center; justify-content: center; z-index: 50000; opacity: 0; pointer-events: none; transition: opacity 0.25s ease, backdrop-filter 0.25s ease; will-change: opacity; }
+        .modal-overlay.active, .closing-box-overlay.active { opacity: 1; pointer-events: auto; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .custom-modal { background: rgba(255, 255, 255, 0.05); padding: 22px 18px 18px 18px; border-radius: 25px; border: 1px solid rgba(231, 226, 206, 0.25); box-shadow: 0 25px 55px rgba(0, 0, 0, 0.65); max-width: 280px; width: 85%; text-align: center; transform: scale(0.9) translateZ(0); opacity: 0; transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s ease; will-change: transform, opacity; }
+        .modal-overlay.active .custom-modal { transform: scale(1) translateZ(0); opacity: 1; }
+        .modal-msg { font-family: 'Comfortaa', sans-serif; font-size: 10pt; color: #E7E2CE; line-height: 1.5; margin-bottom: 18px; text-shadow: 0 0 6px rgba(231,226,206,0.35); }
+        .modal-btn { background: rgba(231, 226, 206, 0.12); border: 1px solid rgba(231, 226, 206, 0.35); color: #F5F4F0; font-family: 'Cinzel', serif; font-size: 9pt; padding: 7px 22px; border-radius: 18px; cursor: pointer; transition: background 0.2s; }
+        .modal-btn:active { background: rgba(231, 226, 206, 0.35); }
+        .btn-surprise { background: linear-gradient(135deg, rgba(231,226,206,0.28), rgba(255,255,255,0.07)); border: 1px solid rgba(231,226,206,0.5); color: #E7E2CE; padding: 14px 30px; border-radius: 25px; font-family: 'Cinzel', serif; font-size: 9.5pt; letter-spacing: 2px; cursor: pointer; box-shadow: 0 12px 35px rgba(0,0,0,0.45), inset 0 0 18px rgba(231,226,206,0.12); transition: all 0.3s ease; text-shadow: 0 0 10px rgba(231,226,206,0.45); will-change: transform; position: relative; z-index: 50; }
+        .btn-surprise:hover { background: linear-gradient(135deg, rgba(231,226,206,0.38), rgba(255,255,255,0.14)); box-shadow: 0 18px 45px rgba(0,0,0,0.55), 0 0 25px rgba(231,226,206,0.45); border-color: rgba(231,226,206,0.8); transform: translateY(-2px) translateZ(0); }
+        .closing-card { background: rgba(20, 35, 75, 0.92); padding: 35px 20px; border-radius: 32px; border: 1px solid rgba(231,226,206,0.4); max-width: 290px; width: 85%; text-align: center; box-shadow: 0 28px 65px rgba(0,0,0,0.75), inset 0 0 28px rgba(231,226,206,0.06); backdrop-filter: blur(16px); }
+        .closing-emoji { font-size: 38pt; margin-bottom: 12px; display: inline-block; filter: drop-shadow(0 0 12px rgba(231,226,206,0.6)); }
+        .closing-card h2 { font-family: 'Cinzel', serif; color: #E7E2CE; text-shadow: 0 0 12px rgba(231,226,206,0.45); }
+        .btn-close-box { background: rgba(255,255,255,0.07); border: 1px solid rgba(231,226,206,0.3); color: rgba(255,255,255,0.9); font-family: 'Comfortaa', sans-serif; font-size: 9.5pt; padding: 10px 28px; border-radius: 18px; cursor: pointer; transition: background 0.2s; }
+        .btn-close-box:active { background: rgba(231, 226, 206, 0.25); }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 40000; }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-audio" preload="auto"></audio>
+
+    <div id="app-wrapper">
+        <!-- 1. LOADING SCREEN -->
+        <div id="screen-loading" class="screen">
+            <div class="cosmic-spinner"></div>
+            <div class="loading-text">Preparing something special...</div>
+            <div id="loading-percent" class="loading-percent">0%</div>
+            <div class="loading-bar-track">
+                <div id="loading-bar-fill" class="loading-bar-fill"></div>
+            </div>
+        </div>
+
+        <!-- 2. PIN SCREEN -->
+        <div id="screen-pin" class="screen hidden">
+            <div class="pin-container">
+                <div class="cassette-wrapper"><img src="1-loading-kaset.png" class="cassette-img" alt=""></div>
+                <h2>For You, My Love</h2>
+                <div class="sub-title">Enter our secret code</div>
+                <div class="pin-dots">
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                </div>
+                <div class="keypad">
+                    <button class="key" onclick="App.pressKey('1')">1</button>
+                    <button class="key" onclick="App.pressKey('2')">2</button>
+                    <button class="key" onclick="App.pressKey('3')">3</button>
+                    <button class="key" onclick="App.pressKey('4')">4</button>
+                    <button class="key" onclick="App.pressKey('5')">5</button>
+                    <button class="key" onclick="App.pressKey('6')">6</button>
+                    <button class="key" onclick="App.pressKey('7')">7</button>
+                    <button class="key" onclick="App.pressKey('8')">8</button>
+                    <button class="key" onclick="App.pressKey('9')">9</button>
+                    <button class="key" onclick="App.pressKey('X')"><svg viewBox="0 0 24 24"><path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z"/></svg></button>
+                    <button class="key" onclick="App.pressKey('0')">0</button>
+                    <button class="key" onclick="App.pressKey('✓')"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></button>
+                </div>
+                <div class="bottom-hint">Hint: tanggal & bulan lahir (17 Desember)</div>
+            </div>
+        </div>
+
+        <!-- 3. GIFT SCREEN -->
+        <div id="screen-gift" class="screen hidden">
+            <div class="gift-container">
+                <img src="kado-tutup.png" id="giftLid" class="gift-box-lid" alt="Tutup Kado">
+                <img src="kado-kotak.png" class="gift-box-body" alt="Badan Kado">
+            </div>
+            <p id="hint-text">Slide the lid upwards to open the gift</p>
+        </div>
+
+        <!-- 4. MAIN CONTENT SCREEN -->
+        <div id="screen-main" class="main-content hidden">
+            <div class="opening-section" id="openingSection">
+                <div class="opening-card-wrapper">
+                    <p class="top-tag">Your Special Day</p>
+                    <div class="opening-title">
+                        <h1 class="txt-happy">Happy</h1>
+                        <h1 class="txt-birthday">Birthday</h1>
+                    </div>
+                    <div class="opening-sub-wrapper">
+                        <p class="opening-sub" id="display-recipient-sub">Aliandi Qonita Rizkya</p>
+                        <p class="opening-date">17 Desember</p> 
+                        <p class="opening-footer-tag">The Most Special Day</p>
+                    </div>
+                </div>
+                <div class="scroll-indicator">
+                    <span class="scroll-text">Scroll</span>
+                    <div class="scroll-arrows"><span></span><span></span><span></span></div>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <!-- Universe Section -->
+                <section id="section-universe">
+                    <h3>My Whole Universe</h3>
+                    <p style="font-family: 'Comfortaa', sans-serif; font-size: 8pt; color: rgba(245,244,240,0.5); text-align: center; font-style: italic;">Ketuk matahari atau planet untuk membaca pesan</p>
+                    
+                    <div class="orbit-system-container">
+                        <div class="orbit-line-bg line-1"></div><div class="orbit-line-bg line-2"></div><div class="orbit-line-bg line-3"></div><div class="orbit-line-bg line-4"></div><div class="orbit-line-bg line-5"></div><div class="orbit-line-bg line-6"></div>
+
+                        <button id="sun-planet" class="orbit-sun-static" onclick="App.revealPlanet('Matahari: Kamu adalah pusat dari seluruh semestaku, pembuat hangat dan pemberi energi paling utama dalam hari-hariku.', this)">
+                            <img src="planet1.png" loading="lazy" alt="Sun"><span class="orbit-label">Matahari</span>
+                        </button>
+
+                        <div class="orbit-rotator-wrapper">
+                            <button class="orbit-item p-mercury" onclick="App.revealPlanet('Merkurius: Sama kayak planet terdekat dari matahari, aku pengen selalu jadi orang yang paling deket di sampingmu.', this)"><div class="orbit-inner-graphic"><img src="planet8.png" loading="lazy"><span class="orbit-label">Merkurius</span></div></button>
+                            <button class="orbit-item p-venus" onclick="App.revealPlanet('Venus: Planet paling cerah, mirip kayak senyuman manis kamu yang selalu sukses bikin duniaku terang benderang.', this)"><div class="orbit-inner-graphic"><img src="planet9.png" loading="lazy"><span class="orbit-label">Venus</span></div></button>
+                            <button class="orbit-item p-earth" onclick="App.revealPlanet('Bumi: Tempat paling aman buat pulang. Dan bagiku, rumah ternyaman itu adalah pelukan kamu.', this)"><div class="orbit-inner-graphic"><img src="planet3.png" loading="lazy"><span class="orbit-label">Bumi</span></div></button>
+                            <button class="orbit-item p-moon" onclick="App.revealPlanet('Bulan: Selayaknya bulan yang selalu setia nemenin bumi di malam gelap, aku pun bakal selalu nemenin setiap fase hidupmu.', this)"><div class="orbit-inner-graphic"><img src="planet4.png" loading="lazy"><span class="orbit-label">Bulan</span></div></button>
+                            <button class="orbit-item p-mars" onclick="App.revealPlanet('Mars: Api semangatmu itu selalu menular, bikin aku terus kagum sama cara kamu berjuang.', this)"><div class="orbit-inner-graphic"><img src="planet5.png" loading="lazy"><span class="orbit-label">Mars</span></div></button>
+                            <button class="orbit-item p-jupiter" onclick="App.revealPlanet('Jupiter: Planet paling besar. Sama kayak rasa sayang dan syukurku karena udah milikin kamu sekarang.', this)"><div class="orbit-inner-graphic"><img src="planet6.png" loading="lazy"><span class="orbit-label">Jupiter</span></div></button>
+                            <button class="orbit-item p-saturn" onclick="App.revealPlanet('Saturnus: Planet yang punya cincin paling indah, pengingat kalau kehadiranmu itu begitu istimewa.', this)"><div class="orbit-inner-graphic"><img src="planet10.png" loading="lazy"><span class="orbit-label">Saturnus</span></div></button>
+                            <button class="orbit-item p-uranus" onclick="App.revealPlanet('Uranus: Tenang dan misterius, tapi selalu penuh kejutan manis yang bikin aku makin jatuh cinta.', this)"><div class="orbit-inner-graphic"><img src="planet2.png" loading="lazy"><span class="orbit-label">Uranus</span></div></button>
+                            <button class="orbit-item p-neptune" onclick="App.revealPlanet('Neptunus: Planet terjauh yang penuh kedalaman pesona, sedalam rinduku ke kamu setiap detiknya.', this)"><div class="orbit-inner-graphic"><img src="planet7.png" loading="lazy"><span class="orbit-label">Neptunus</span></div></button>
+                        </div>
+                    </div>
+                    <div id="planet-text" class="planet-msg"></div>
+                </section>
+
+                <!-- Letter Section -->
+                <section>
+                    <h3>A Letter For You</h3>
+                    <div style="position: relative;">
+                        <div class="glass-paper">
+                            <p id="letter-greeting" style="margin-bottom: 15px; font-size: 12pt; font-family: 'Cinzel', serif; color: #E7E2CE; text-shadow: 0 0 6px rgba(231,226,206,0.4);"></p>
+                            <p style="margin-bottom: 14px; color: rgba(245,244,240,0.92);">Di hari yang sangat spesial ini, aku ingin kamu tahu bahwa setiap hari bersamamu adalah anugerah yang tak ternilai harganya. Kehadiranmu membawa cahaya di setiap sudut hidupku — bahkan di hari-hari yang paling gelap sekalipun.</p>
+                            <p style="margin-bottom: 14px; color: rgba(245,244,240,0.92);">Tawa dan senyumanmu adalah hal terindah yang pernah aku temukan. Cara kamu melihat dunia dengan ketulusan dan kebaikan hatimu selalu menginspirasiku untuk menjadi versi terbaik dari diriku.</p>
+                            <p style="margin-bottom: 14px; font-style: italic; color: #E7E2CE; text-shadow: 0 0 6px rgba(231,226,206,0.35);">Terima kasih sudah menjadi dirimu sendiri — dengan segala keunikan, kelembutan hatimu, dan semangat yang tak pernah pudar.</p>
+                            <div style="text-align: right; font-family: 'Cinzel', serif; font-size: 9.5pt; color: rgba(231,226,206,0.75); margin-top: 15px;">
+                                With all my love,<br><span id="letter-sender" style="font-size: 12pt; color: #E7E2CE; font-weight: 500; text-shadow: 0 0 10px rgba(231,226,206,0.45);"></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Music Player Section -->
+                <section>
+                    <h3>Our Special Playlist</h3>
+                    <div class="ios-player-container">
+                        <div class="player-album-art" id="albumArtBox">
+                            <svg id="placeholder-svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#E7E2CE" stroke-width="1"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+                            <img id="player-cover" src="" loading="lazy" alt="">
+                        </div>
+                        <div style="text-align:center; margin-bottom:10px;">
+                            <h4 id="current-title" style="font-family:'Cinzel',serif; font-size:11pt; color:#E7E2CE; text-shadow: 0 0 6px rgba(231,226,206,0.4);">Player Paused</h4>
+                            <p id="current-artist" style="font-family:'Comfortaa',sans-serif; font-size:8pt; color:rgba(231,226,206,0.55);">Select a track below</p>
+                        </div>
+                        <div style="width:100%; margin-bottom:12px;">
+                            <input type="range" id="timelineSlider" class="timeline-slider" min="0" value="0" max="100" oninput="App.seekAudio(this.value)">
+                        </div>
+                        <div class="player-controls">
+                            <button class="control-btn" onclick="App.prevTrack()"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+                            <button class="control-btn play-main-btn" onclick="App.togglePlayMain()"><svg id="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+                            <button class="control-btn" onclick="App.nextTrack()"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zm-10.5 0v12l8.5-6z"/></svg></button>
+                        </div>
+                    </div>
+                    <div class="playlist-card">
+                        <div class="track" id="t1" onclick="App.selectTrack('Jatuh Suka', 'Tulus', 't1', 'Jatuh Suka.jpg', 'TULUS - Jatuh Suka.mp3')"><span>1. Jatuh Suka</span><span>Tulus</span></div>
+                        <div class="track" id="t2" onclick="App.selectTrack('Hujan', 'Utopia', 't2', 'Hujan.jpg', 'Utopia - Hujan.mp3')"><span>2. Hujan</span><span>Utopia</span></div>
+                        <div class="track" id="t3" onclick="App.selectTrack('Tujuh Belas', 'Tulus', 't3', 'Tujuh Belas.jpg', 'TULUS - Tujuh Belas.mp3')"><span>3. Tujuh Belas</span><span>Tulus</span></div>
+                    </div>
+                </section>
+
+                <!-- Wishes Section -->
+                <section>
+                    <h3>Wishes From The Stars</h3>
+                    <div class="cosmic-star-container" id="starContainer">
+                        <div class="star-glow-ring"></div>
+                        <div class="star-hint-badge">Ketuk bintangnya</div>
+                        <button id="cosmicStarBtn" class="cosmic-star-trigger" onclick="App.triggerCosmicWish(event)">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </button>
+                    </div>
+                    <div id="jar-message" class="jar-msg"></div>
+                </section>
+
+                <!-- Closing Section -->
+                <section class="closing-section-box" style="border:none; text-align:center;">
+                    <p style="font-family:'Cormorant Garamond',serif; font-size:12pt; color:#E7E2CE; font-style:italic; line-height:1.8; margin-bottom:25px; text-shadow: 0 0 8px rgba(231,226,206,0.35);">"Terima kasih sudah berjalan sejauh ini bersamaku. Di setiap detak waktu dan sudut semesta, kamulah keindahan yang paling aku syukuri..."</p>
+                    <button class="btn-surprise" onclick="App.toggleClosingBox(true)">Open Final Surprise</button>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. OVERLAYS, MODALS & CANVAS -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <div id="custom-alert" class="modal-overlay">
+        <div class="custom-modal">
+            <div id="modal-text" class="modal-msg"></div>
+            <button class="modal-btn" onclick="App.closeModal()">OKE</button>
+        </div>
+    </div>
+
+    <div id="closing-box" class="closing-box-overlay">
+        <div class="closing-card">
+            <div class="closing-emoji">
+                <img src="kue.png" alt="Cake" style="width: 65px; height: 65px; object-fit: contain;" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                <span style="display:none;">🎂</span>
+            </div>
+            <h2>Happy Birthday!</h2>
+            <p id="closing-recipient" style="font-family:'Comfortaa',sans-serif; font-size:9.5pt; color:rgba(255,255,255,0.75); margin-bottom:25px;"></p>
+            <button class="btn-close-box" onclick="App.toggleClosingBox(false)">Close ✕</button>
+        </div>
+    </div>
+
+    <script>
+        const App = (() => {
+            const recipientName = "Aliandi Qonita Rizkya";
+            const senderName = "Nauval Abdi Dzaky";
+            const starImages = ['1-loading-bintang-1.png', '1-loading-bintang-2.png', '1-loading-bintang-3.png', '1-loading-bintang-4.png', '1-loading-bintang-5.png'];
+            const assets = ['1-loading-kaset.png', 'kado-tutup.png', 'kado-kotak.png', 'planet1.png', 'planet2.png', 'planet3.png', 'planet4.png', 'planet5.png', 'planet6.png', 'planet7.png', 'planet8.png', 'planet9.png', 'planet10.png', 'thumbnail.png', 'Jatuh Suka.jpg', 'Hujan.jpg', 'Tujuh Belas.jpg', 'TULUS - Jatuh Suka.mp3', 'Utopia - Hujan.mp3', 'TULUS - Tujuh Belas.mp3'];
+
+            let loaded = 0, enteredPin = "", lastInputTime = 0, currentTrackIndex = -1, isPlaying = false;
+            const CORRECT_PIN = "1712"; // 17 Desember
+            const tracks = [
+                { title: 'Jatuh Suka', artist: 'Tulus', id: 't1', cover: 'Jatuh Suka.jpg', src: 'TULUS - Jatuh Suka.mp3' },
+                { title: 'Hujan', artist: 'Utopia', id: 't2', cover: 'Hujan.jpg', src: 'Utopia - Hujan.mp3' },
+                { title: 'Tujuh Belas', artist: 'Tulus', id: 't3', cover: 'Tujuh Belas.jpg', src: 'TULUS - Tujuh Belas.mp3' }
+            ];
+            const wishes = ["May your heart always be filled with joy and laughter", "I hope all your dreams turn into reality soon", "Wishing you strength, health, and endless happiness", "May our story remain sweet through every chapter", "You are doing great, and I'm always proud of you"];
+            let wishIndex = 0;
+            const audio = document.getElementById('bg-audio');
+
+            /* ================= INITIALIZATION & NAMES ================= */
+            function applyDynamicNames() {
+                document.getElementById('display-recipient-sub').innerText = recipientName;
+                document.getElementById('letter-greeting').innerText = `Dearest ${recipientName},`;
+                document.getElementById('letter-sender').innerText = senderName;
+                document.getElementById('closing-recipient').innerText = recipientName;
+            }
+
+            function initFallingStars() {
+                setInterval(() => {
+                    const star = document.createElement('img');
+                    star.src = starImages[Math.floor(Math.random() * starImages.length)];
+                    star.className = 'falling-star';
+                    star.style.left = Math.random() * window.innerWidth + 'px';
+                    const size = Math.random() * 8 + 14;
+                    star.style.width = size + 'px'; star.style.height = size + 'px';
+                    const duration = Math.random() * 1.5 + 4;
+                    star.style.animationDuration = duration + 's';
+                    star.onerror = () => star.remove();
+                    document.body.appendChild(star);
+                    setTimeout(() => star.remove(), duration * 1000);
+                }, 400);
+            }
+
+            function preloadAssets() {
+                const percentText = document.getElementById('loading-percent');
+                const fillBar = document.getElementById('loading-bar-fill');
+                const update = () => {
+                    loaded++;
+                    const p = Math.min(Math.floor((loaded / assets.length) * 100), 100);
+                    if (percentText) percentText.innerText = p + '%';
+                    if (fillBar) fillBar.style.width = p + '%';
+                    if (loaded >= assets.length) {
+                        setTimeout(() => {
+                            document.getElementById('screen-loading').classList.add('hidden');
+                            document.getElementById('screen-pin').classList.remove('hidden');
+                        }, 400);
+                    }
+                };
+                assets.forEach(src => {
+                    if (src.endsWith('.mp3')) {
+                        const a = new Audio();
+                        a.oncanplaythrough = update; a.onerror = update; a.src = src;
+                    } else {
+                        const img = new Image();
+                        img.onload = update; img.onerror = update; img.src = src;
+                    }
+                });
+            }
+
+            /* ================= PIN & KEYPAD LOGIC ================= */
+            function pressKey(key) {
+                const now = Date.now(); if (now - lastInputTime < 100) return; lastInputTime = now;
+                const dots = document.querySelectorAll('.dot');
+                if (key === 'X') {
+                    if (enteredPin.length > 0) { enteredPin = enteredPin.slice(0, -1); dots[enteredPin.length].classList.remove('active'); }
+                } else if (key === '✓') {
+                    if (enteredPin === CORRECT_PIN) {
+                        document.getElementById('screen-pin').classList.add('hidden');
+                        document.getElementById('screen-gift').classList.remove('hidden');
+                        initGiftDrag();
+                    } else {
+                        showAlert("Kode PIN salah! Silakan coba lagi"); enteredPin = ""; dots.forEach(d => d.classList.remove('active'));
+                    }
+                } else {
+                    if (enteredPin.length < 4) { enteredPin += key; dots[enteredPin.length - 1].classList.add('active'); }
+                }
+            }
+
+            /* ================= GIFT BOX INTERACTION ================= */
+            function initGiftDrag() {
+                const lid = document.getElementById('giftLid');
+                const screenGift = document.getElementById('screen-gift');
+                let startY = 0, isDragging = false;
+                const start = e => { isDragging = true; startY = e.touches ? e.touches[0].clientY : e.clientY; };
+                const move = e => {
+                    if (!isDragging) return;
+                    let deltaY = (e.touches ? e.touches[0].clientY : e.clientY) - startY;
+                    if (deltaY > 0) deltaY = 0;
+                    lid.style.transform = `translateY(${deltaY}px)`;
+                    if (deltaY < -90) openGift();
+                };
+                const end = () => {
+                    if (!isDragging) return; isDragging = false;
+                    lid.style.transform = "translateY(0)";
+                    lid.style.transition = "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+                };
+                function openGift() {
+                    isDragging = false;
+                    lid.style.transition = "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s";
+                    lid.style.transform = "translateY(-340px) rotate(-12deg)"; lid.style.opacity = "0";
+                    setTimeout(() => burstConfetti(), 150);
+                    setTimeout(() => {
+                        document.getElementById('screen-gift').classList.add('hidden');
+                        document.getElementById('screen-main').classList.remove('hidden');
+                        document.getElementById('app-wrapper').classList.add('allow-scroll');
+                        initScrollAnimation();
+                        selectTrack('Jatuh Suka', 'Tulus', 't1', 'Jatuh Suka.jpg', 'TULUS - Jatuh Suka.mp3');
+                    }, 550);
+                }
+                lid.addEventListener('touchstart', start, { passive: true });
+                screenGift.addEventListener('touchmove', move, { passive: false });
+                screenGift.addEventListener('touchend', end);
+                lid.addEventListener('mousedown', start);
+                screenGift.addEventListener('mousemove', move);
+                screenGift.addEventListener('mouseup', end);
+            }
+
+            /* ================= SCROLL & UNIVERSE ANIMATIONS ================= */
+            function initScrollAnimation() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('reveal-active');
+                            if (entry.target.id === 'section-universe') spawnPlanets();
+                        } else {
+                            entry.target.classList.remove('reveal-active');
+                        }
+                    });
+                }, { threshold: 0.10 });
+                document.querySelectorAll('#openingSection, .content-body section:not(.closing-section-box)').forEach(el => observer.observe(el));
+            }
+
+            function spawnPlanets() {
+                document.getElementById('sun-planet').classList.add('spawned');
+                document.querySelectorAll('.orbit-item').forEach((planet, index) => {
+                    setTimeout(() => {
+                        if (document.getElementById('section-universe').classList.contains('reveal-active')) planet.classList.add('spawned');
+                    }, 200 + (index * 120));
+                });
+            }
+
+            function revealPlanet(msg, el) {
+                if (el) {
+                    el.classList.remove('animate-glow');
+                    void el.offsetWidth;
+                    el.classList.add('animate-glow');
+                }
+                const box = document.getElementById('planet-text');
+                box.classList.remove('active');
+                setTimeout(() => { box.innerText = msg; box.classList.add('active'); }, 50);
+            }
+
+            /* ================= MUSIC PLAYER CONTROLLER ================= */
+            audio.addEventListener('timeupdate', () => {
+                if (audio.duration) document.getElementById('timelineSlider').value = (audio.currentTime / audio.duration) * 100;
+            });
+            audio.addEventListener('ended', nextTrack);
+
+            function seekAudio(val) { if (audio.duration) audio.currentTime = (val / 100) * audio.duration; }
+
+            function selectTrack(title, artist, trackId, coverImg, audioSrc) {
+                document.querySelectorAll('.track').forEach(t => t.classList.remove('active'));
+                const el = document.getElementById(trackId); if (el) el.classList.add('active');
+                currentTrackIndex = tracks.findIndex(t => t.id === trackId);
+                document.getElementById('current-title').innerText = title;
+                document.getElementById('current-artist').innerText = artist;
+
+                const playerCover = document.getElementById('player-cover');
+                const placeholderSvg = document.getElementById('placeholder-svg');
+                playerCover.src = coverImg; playerCover.style.display = 'block';
+                if (placeholderSvg) placeholderSvg.style.display = 'none';
+
+                audio.src = audioSrc;
+                audio.play().then(() => { isPlaying = true; updatePlayState(); }).catch(() => { isPlaying = false; updatePlayState(); });
+            }
+
+            function togglePlayMain() {
+                if (currentTrackIndex === -1) { selectTrack(tracks[0].title, tracks[0].artist, tracks[0].id, tracks[0].cover, tracks[0].src); return; }
+                if (isPlaying) { audio.pause(); isPlaying = false; } else { audio.play(); isPlaying = true; }
+                updatePlayState();
+            }
+
+            function updatePlayState() {
+                const playIcon = document.getElementById('play-icon');
+                playIcon.innerHTML = isPlaying ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>' : '<path d="M8 5v14l11-7z"/>';
+            }
+
+            function nextTrack() {
+                currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+                const t = tracks[currentTrackIndex];
+                selectTrack(t.title, t.artist, t.id, t.cover, t.src);
+            }
+
+            function prevTrack() {
+                currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+                const t = tracks[currentTrackIndex];
+                selectTrack(t.title, t.artist, t.id, t.cover, t.src);
+            }
+
+            function triggerCosmicWish(e) {
+                const btn = document.getElementById('cosmicStarBtn');
+                btn.classList.remove('animate-click');
+                void btn.offsetWidth;
+                btn.classList.add('animate-click');
+
+                const jarMsg = document.getElementById('jar-message'); jarMsg.classList.remove('active');
+                setTimeout(() => {
+                    jarMsg.innerText = wishes[wishIndex];
+                    jarMsg.classList.add('active');
+                    wishIndex = (wishIndex + 1) % wishes.length;
+                }, 200);
+            }
+
+            /* ================= MODALS & HISTORY ================= */
+            function showAlert(text) {
+                document.getElementById('modal-text').innerText = text;
+                document.getElementById('custom-alert').classList.add('active');
+                history.pushState({ modal: 'alert' }, '');
+            }
+            function closeModal() { document.getElementById('custom-alert').classList.remove('active'); }
+
+            function toggleClosingBox(show) {
+                const box = document.getElementById('closing-box');
+                if (show) { 
+                    box.classList.add('active'); 
+                    burstConfetti(); 
+                    history.pushState({ modal: 'closing' }, '');
+                } else { 
+                    box.classList.remove('active'); 
+                }
+            }
+
+            window.addEventListener('popstate', () => {
+                if (document.getElementById('custom-alert').classList.contains('active')) closeModal();
+                else if (document.getElementById('closing-box').classList.contains('active')) toggleClosingBox(false);
+            });
+
+            /* ================= CONFETTI ANIMATION ENGINE ================= */
+            const canvas = document.getElementById("confetti-canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+            let confP = [], animId;
+
+            class Confetti {
+                constructor() {
+                    this.x = window.innerWidth / 2; this.y = window.innerHeight / 2;
+                    this.size = Math.random() * 8 + 4;
+                    const angle = Math.random() * Math.PI * 2, speed = Math.random() * 10 + 4;
+                    this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed - Math.random() * 4;
+                    this.gravity = 0.25; this.rotation = Math.random() * 360; this.rotationSpeed = Math.random() * 10 - 5;
+                    this.color = `hsla(${[15, 45, 210, 340, 50][Math.floor(Math.random() * 5)]}, 85%, 65%, ${Math.random() * 0.3 + 0.7})`;
+                }
+                update() { this.x += this.vx; this.y += this.vy; this.vy += this.gravity; this.vx *= 0.98; this.rotation += this.rotationSpeed; }
+                draw() {
+                    ctx.save(); ctx.translate(this.x, this.y); ctx.rotate((this.rotation * Math.PI) / 180);
+                    ctx.fillStyle = this.color; ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size); ctx.restore();
+                }
+            }
+
+            function burstConfetti() {
+                for (let i = 0; i < 80; i++) confP.push(new Confetti());
+                animateConfetti();
+            }
+
+            function animateConfetti() {
+                ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                confP.forEach((p, index) => {
+                    p.update(); p.draw();
+                    if (p.y > window.innerHeight || p.x < 0 || p.x > window.innerWidth) confP.splice(index, 1);
+                });
+                if (confP.length > 0) animId = requestAnimationFrame(animateConfetti);
+                else { ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); cancelAnimationFrame(animId); }
+            }
+
+            window.addEventListener('DOMContentLoaded', () => {
+                applyDynamicNames();
+                initFallingStars();
+                preloadAssets();
+            });
+
+            return { pressKey, closeModal, toggleClosingBox, revealPlanet, seekAudio, selectTrack, togglePlayMain, nextTrack, prevTrack, triggerCosmicWish };
+        })();
+    </script>
+</body>
+</html>

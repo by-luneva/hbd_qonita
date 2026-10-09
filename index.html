@@ -7,13 +7,13 @@
     
     <meta property="og:title" content="Astroluv | Aliandi's Day">
     <meta property="og:description" content="written in the stars, built for the main character.">
-    <meta property="og:image" content="https://by-luneva.github.io/astroluv/thumbnail.png?v=3">
-    <meta property="og:url" content="https://by-luneva.github.io/astroluv/">
+    <meta property="og:image" content="https://by-luneva.github.io/hbd_qonita/thumbnail.png?v=3">
+    <meta property="og:url" content="https://by-luneva.github.io/hbd_qonita/">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Astroluv | Aliandi's Day">
     <meta name="twitter:description" content="written in the stars, built for the main character.">
-    <meta name="twitter:image" content="https://by-luneva.github.io/astroluv/thumbnail.png?v=3">
+    <meta name="twitter:image" content="https://by-luneva.github.io/hbd_qonita/thumbnail.png?v=3">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -140,9 +140,12 @@
         .control-btn svg { width: 22px; height: 22px; fill: currentColor; }
         .play-main-btn svg { width: 28px; height: 28px; }
         .playlist-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(231,226,206,0.12); padding: 10px; border-radius: 16px; margin-top: 14px; width: 100%; max-width: 290px; margin-inline: auto; box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
-        .track { background: rgba(255,255,255,0.022); padding: 11px 14px; margin: 6px 0; border-radius: 12px; cursor: pointer; display: grid; grid-template-columns: 1.2fr 1fr; font-size: 9pt; font-family: 'Comfortaa', sans-serif; transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease; border: 1px solid transparent; }
+        .track { background: rgba(255,255,255,0.022); padding: 11px 14px; margin: 6px 0; border-radius: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 9pt; font-family: 'Comfortaa', sans-serif; transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease; border: 1px solid transparent; }
+        .track span:first-child { flex: 1; text-align: left; }
+        .track span:last-child { text-align: right; color: rgba(245, 244, 240, 0.7); }
         .track:hover { background: rgba(231, 226, 206, 0.09); border-color: rgba(231,226,206,0.22); }
         .track.active { background: #E7E2CE; color: #112250; font-weight: bold; box-shadow: 0 0 18px rgba(231,226,206,0.6); }
+        .track.active span:last-child { color: #112250; }
 
         .cosmic-star-container { display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 30px 0 18px 0; position: relative; }
         .star-glow-ring { position: absolute; width: 105px; height: 105px; border-radius: 50%; background: radial-gradient(circle, rgba(231,226,206,0.3) 0%, transparent 70%); animation: ringPulse 2.5s ease-in-out infinite; pointer-events: none; }
@@ -214,7 +217,7 @@
                     <button class="key" onclick="App.pressKey('0')">0</button>
                     <button class="key" onclick="App.pressKey('✓')"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></button>
                 </div>
-                <div class="bottom-hint">Hint: tanggal & bulan lahir (17 Desember)</div>
+                <div class="bottom-hint">Hint: tanggal & bulan lahir</div>
             </div>
         </div>
 
@@ -372,7 +375,7 @@
             const assets = ['1-loading-kaset.png', 'kado-tutup.png', 'kado-kotak.png', 'planet1.png', 'planet2.png', 'planet3.png', 'planet4.png', 'planet5.png', 'planet6.png', 'planet7.png', 'planet8.png', 'planet9.png', 'planet10.png', 'thumbnail.png', 'Jatuh Suka.jpg', 'Hujan.jpg', 'Tujuh Belas.jpg', 'TULUS - Jatuh Suka.mp3', 'Utopia - Hujan.mp3', 'TULUS - Tujuh Belas.mp3'];
 
             let loaded = 0, enteredPin = "", lastInputTime = 0, currentTrackIndex = -1, isPlaying = false;
-            const CORRECT_PIN = "1712"; // 17 Desember
+            const CORRECT_PIN = "1712";
             const tracks = [
                 { title: 'Jatuh Suka', artist: 'Tulus', id: 't1', cover: 'Jatuh Suka.jpg', src: 'TULUS - Jatuh Suka.mp3' },
                 { title: 'Hujan', artist: 'Utopia', id: 't2', cover: 'Hujan.jpg', src: 'Utopia - Hujan.mp3' },
